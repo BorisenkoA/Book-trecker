@@ -74,7 +74,6 @@ const books = [
   },
 ];
 
-
 const bookToPaste = books.map((book) => {
   let statusClass = "";
 
@@ -101,25 +100,63 @@ bookContainer.insertAdjacentHTML("afterbegin", bookToPaste);
 
 const book = document.querySelectorAll(".book");
 
+const originalBookStatus = document.querySelector(".status");
+
 book.forEach((item) => {
   item.addEventListener("click", () => {
     
     const modal = document.createElement("div");
     modal.classList.add("modal");
     const clone = item.cloneNode(true);
+    clone.classList.add("modal-card");
+
+    const clonedStatus = clone.querySelector(".status");
+    clonedStatus.remove();
+
+    const clonedStatusBtns = document.createElement("div");
+    clonedStatusBtns.classList.add("status-btns");
+    const statusRead = document.createElement("button");
+    statusRead.classList.add("status-btn", "read");
+    statusRead.innerText = "Прочитано";
+    const statusInProgress = document.createElement("button");
+    statusInProgress.classList.add("status-btn", "in-progress");
+    statusInProgress.innerText = "В процесі";
+    const statusNotRead = document.createElement("button");
+    statusNotRead.classList.add("status-btn", "not-read");
+    statusNotRead.innerText = "Не прочитано";
+    clonedStatusBtns.appendChild(statusRead);
+    clonedStatusBtns.appendChild(statusInProgress);
+    clonedStatusBtns.appendChild(statusNotRead);
+
+    statusRead.addEventListener("click", (e) => {
+      if (e.target === statusRead) {
+        modal.classList.add("hidden")
+      }
+    });
+
+    statusInProgress.addEventListener("click", (e) => {
+      if (e.target === statusInProgress) {
+        modal.classList.add("hidden")
+      }
+    });
+
+    statusNotRead.addEventListener("click", (e) => {
+      if (e.target === statusNotRead) {
+        modal.classList.add("hidden")
+      }
+    });
+
+    clone.appendChild(clonedStatusBtns);
+
     modal.appendChild(clone);
+    
     document.body.appendChild(modal);
 
-    // Я створив тут копію картки, щоб не писати код повторно (чат допоміг)
-    // Але є питання, у мене відкривається модалка, але картка там має інші розміри, заголовок із назвою книги розтягується в й рядок
-
-    
-    // Написав код для закриття модалки
+    // Kод для закриття модалки
     modal.addEventListener("click", (e) => {
       if (e.target === modal) {
         modal.classList.add("hidden")
       }
     })
-
   });
 });

@@ -194,3 +194,50 @@ ul {
 .hidden {
   display: none;
 }
+
+.modal-card {
+  max-width: 35rem;
+  width: 100%;
+}
+
+.status-btns {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.status-btns button {
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  font-size: 1.4rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.status-btn.read {
+  background: #28a745; /* зелений */
+}
+
+.status-btn.read:hover {
+  background: #1e7e34; /* зелении при наведенні */
+}
+
+.status-btn.not-read {
+  background: #ff4d4d; /* червоний */
+}
+
+.status-btn.not-read:hover {
+  background: #c82333; /* червоний при наведенні */
+}
+
+.status-btn.in-progress {
+  background: #f49e26; /* помаранчевий */
+}
+
+.status-btn.in-progress:hover {
+  background: #9a7507; /* помаранчевий при наведенні */
+}
