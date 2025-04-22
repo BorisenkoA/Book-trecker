@@ -1,5 +1,6 @@
 const books = [
   {
+    id: 1,
     image: "./img_1.jpg",
     title: "Я бачу, вас цікавить пітьма",
     author: "Ілларіон Павлюк",
@@ -8,6 +9,7 @@ const books = [
     status: "Прочитано",
   },
   {
+    id: 2,
     image: "./img_2.jpg",
     title: "Іди туди, де страшно. І отримаєш те, про що мрієш",
     author: "Джим Ловлесс",
@@ -16,6 +18,7 @@ const books = [
     status: "Не прочитано",
   },
   {
+    id: 3,
     image: "./img_3.jpg",
     title: "Людина в пошуках справжнього сенсу",
     author: "Віктор Франкл",
@@ -24,6 +27,7 @@ const books = [
     status: "В процесі",
   },
   {
+    id: 4,
     image: "./img_4.jpg",
     title: "Зелене світло",
     author: "Метью Макконагі",
@@ -32,6 +36,7 @@ const books = [
     status: "Не прочитано",
   },
   {
+    id: 5,
     image: "./img_5.jpg",
     title: "Кафе на краю світу",
     author: "Джон Стрелекі",
@@ -40,14 +45,17 @@ const books = [
     status: "В процесі",
   },
   {
+    id: 6,
     image: "./img_6.jpg",
-    title: "Good Vibes, Good Life. Любов до себе — ключ до розкриття вашої величі",
+    title:
+      "Good Vibes, Good Life. Любов до себе — ключ до розкриття вашої величі",
     author: "Векс Кінг",
     genre: "Детектив",
     price: 320,
     status: "Не прочитано",
   },
   {
+    id: 7,
     image: "./img_7.jpg",
     title: "Емоційний інтелект",
     author: "Деніел Гоулман",
@@ -56,6 +64,7 @@ const books = [
     status: "В процесі",
   },
   {
+    id: 8,
     image: "./img_8.jpg",
     title: "Танець недоумка",
     author: "Ілларіон Павлюк",
@@ -64,6 +73,7 @@ const books = [
     status: "Прочитано",
   },
 ];
+
 
 const bookToPaste = books.map((book) => {
   let statusClass = "";
@@ -88,3 +98,16 @@ const bookToPaste = books.map((book) => {
 const bookContainer = document.querySelector(".books");
 
 bookContainer.insertAdjacentHTML("afterbegin", bookToPaste);
+
+const book = document.querySelectorAll(".book");
+
+book.forEach((item) => {
+  item.addEventListener("click", () => {
+    
+    const modal = document.createElement("div");
+    modal.classList.add("modal");
+    const clone = item.cloneNode(true);
+    modal.appendChild(clone);
+    document.body.appendChild(modal);
+  });
+});
