@@ -128,6 +128,12 @@ book.forEach((item) => {
     clonedStatusBtns.appendChild(statusInProgress);
     clonedStatusBtns.appendChild(statusNotRead);
 
+
+    // Тут я додав слухачі на всі кнопки статусу в модалці. Чомусь через clonedStatusBtns.forEach не спрацьовує. 
+    // Тому я вирішив зробити так.
+    // І ще не виходить змінити статус на той, який я натискаю.
+    // Можливо, через те, що я не можу дістатися до самого статусу в модалці?
+    // Якщо я правильно зрозумів, то потрібно дістатися до статусу в модалці і змінити його на той, який я натискаю.
     statusRead.addEventListener("click", (e) => {
       if (e.target === statusRead) {
         modal.classList.add("hidden")
