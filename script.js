@@ -74,95 +74,167 @@ const books = [
   },
 ];
 
-const bookToPaste = books.map((book) => {
-  let statusClass = "";
+function renderBooks() {
 
-  if (book.status === "Не прочитано") {
-    statusClass = "not-read";
-  } else if (book.status === "В процесі") {
-    statusClass = "in-progress";
-  } else if (book.status === "Прочитано") {
-    statusClass = "read";
-  }
+  const bookContainer = document.querySelector(".books");
+  bookContainer.innerHTML = "";
 
-  return `<div class="book">
+  const bookToPaste = books
+    .map((book) => {
+      let statusClass = "";
+
+      if (book.status === "Не прочитано") {
+        statusClass = "not-read";
+      } else if (book.status === "В процесі") {
+        statusClass = "in-progress";
+      } else if (book.status === "Прочитано") {
+        statusClass = "read";
+      }
+
+      return `<div class="book">
   <div class="image"><img src="${book.image}" alt="book"></div>
   <h2 class="title">${book.title}</h2>
   <p class="author">${book.author}</p>
   <p class="price">${book.price} грн</p>
   <p class="status ${statusClass}">${book.status}</p>
 </div>`;
-}).join("");
-
-const bookContainer = document.querySelector(".books");
-
-bookContainer.insertAdjacentHTML("afterbegin", bookToPaste);
-
-const book = document.querySelectorAll(".book");
-
-const originalBookStatus = document.querySelector(".status");
-
-book.forEach((item) => {
-  item.addEventListener("click", () => {
-    
-    const modal = document.createElement("div");
-    modal.classList.add("modal");
-    const clone = item.cloneNode(true);
-    clone.classList.add("modal-card");
-
-    const clonedStatus = clone.querySelector(".status");
-    clonedStatus.remove();
-
-    const clonedStatusBtns = document.createElement("div");
-    clonedStatusBtns.classList.add("status-btns");
-    const statusRead = document.createElement("button");
-    statusRead.classList.add("status-btn", "read");
-    statusRead.innerText = "Прочитано";
-    const statusInProgress = document.createElement("button");
-    statusInProgress.classList.add("status-btn", "in-progress");
-    statusInProgress.innerText = "В процесі";
-    const statusNotRead = document.createElement("button");
-    statusNotRead.classList.add("status-btn", "not-read");
-    statusNotRead.innerText = "Не прочитано";
-    clonedStatusBtns.appendChild(statusRead);
-    clonedStatusBtns.appendChild(statusInProgress);
-    clonedStatusBtns.appendChild(statusNotRead);
-
-
-    // Тут я додав слухачі на всі кнопки статусу в модалці. Чомусь через clonedStatusBtns.forEach не спрацьовує. 
-    // Тому я вирішив зробити так.
-    // І ще не виходить змінити статус на той, який я натискаю.
-    // Можливо, через те, що я не можу дістатися до самого статусу в модалці?
-    // Якщо я правильно зрозумів, то потрібно дістатися до статусу в модалці і змінити його на той, який я натискаю.
-    statusRead.addEventListener("click", (e) => {
-      if (e.target === statusRead) {
-        modal.classList.add("hidden")
-      }
-    });
-
-    statusInProgress.addEventListener("click", (e) => {
-      if (e.target === statusInProgress) {
-        modal.classList.add("hidden")
-      }
-    });
-
-    statusNotRead.addEventListener("click", (e) => {
-      if (e.target === statusNotRead) {
-        modal.classList.add("hidden")
-      }
-    });
-
-    clone.appendChild(clonedStatusBtns);
-
-    modal.appendChild(clone);
-    
-    document.body.appendChild(modal);
-
-    // Kод для закриття модалки
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) {
-        modal.classList.add("hidden")
-      }
     })
+    .join("");
+
+  bookContainer.insertAdjacentHTML("afterbegin", bookToPaste);
+
+  addBookClickListeners();
+}
+renderBooks();
+
+function addBookClickListeners() {
+
+  const booksDOM = document.querySelectorAll(".book");
+
+  booksDOM.forEach((item) => {
+    item.addEventListener("click", () => {
+      const modal = document.createElement("div");
+      modal.classList.add("modal");
+      const clone = item.cloneNode(true);
+      clone.classList.add("modal-card");
+
+      const clonedStatus = clone.querySelector(".status");
+      clonedStatus.remove();
+
+      const clonedStatusBtns = document.createElement("div");
+      clonedStatusBtns.classList.add("status-btns");
+      const statusRead = document.createElement("button");
+      statusRead.classList.add("status-btn", "read");
+      statusRead.innerText = "Прочитано";
+      const statusInProgress = document.createElement("button");
+      statusInProgress.classList.add("status-btn", "in-progress");
+      statusInProgress.innerText = "В процесі";
+      const statusNotRead = document.createElement("button");
+      statusNotRead.classList.add("status-btn", "not-read");
+      statusNotRead.innerText = "Не прочитано";
+
+      clonedStatusBtns.appendChild(statusRead);
+      clonedStatusBtns.appendChild(statusInProgress);
+      clonedStatusBtns.appendChild(statusNotRead);
+
+      // А такий код спрацював, чомусь треба було записати блок із кнопками в змінну, використати querySelectorAll.
+      // Не можу собі цього поясити.
+      const cloneButtons = clonedStatusBtns.querySelectorAll(".status-btn");
+
+      cloneButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          modal.classList.add("hidden");
+
+          // Прикольно, спрацювало, але хочу зрозуміти, чому так.
+          const status = button.innerText;
+          const statusClass = button.classList[1];
+          const bookStatus = item.querySelector(".status");
+          bookStatus.classList.remove("not-read", "in-progress", "read");
+          bookStatus.classList.add(statusClass);
+          bookStatus.innerText = status;
+        });
+      });
+
+      clone.appendChild(clonedStatusBtns);
+
+      // Додаю кнопку видалення книжки.
+      const removedButton = document.createElement("div");
+      removedImage = document.createElement("img");
+      removedImage.src = "./trash.svg";
+      removedImage.alt = "Remove book";
+      removedImage.classList.add("remove-icon");
+      removedButton.appendChild(removedImage);
+      removedButton.classList.add("remove-button");
+      removedButton.addEventListener("click", () => {
+        item.remove();
+        modal.classList.add("hidden");
+      });
+      clone.appendChild(removedButton);
+
+      // Додаю клон книжки в модалку
+      modal.appendChild(clone);
+
+      // Додаю модалку в DOM
+      document.body.appendChild(modal);
+
+      // Kод для закриття модалки
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+          modal.classList.add("hidden");
+        }
+      });
+    });
+  });
+}
+
+// Додавання книжки
+const addBookButton = document.querySelector(".add-book");
+
+addBookButton.addEventListener("click", () => {
+  console.log("Add book button clicked");
+
+  const addBookModal = document.createElement("div");
+  addBookModal.classList.add("add-book-modal");
+  addBookModal.innerHTML = `
+    <div class="add-book-content">
+      <input type="file" accept="image/*" placeholder="Завантажити зображення" class="add-book-image">
+      <input type="text" placeholder="Назва" class="add-book-title">
+      <input type="text" placeholder="Автор" class="add-book-author">
+      <input type="text" placeholder="Жанр" class="add-book-genre">
+      <input type="number" placeholder="Ціна" class="add-book-price">
+      <button class="add-book-submit">Додати</button>
+    </div>
+  `;
+  document.body.appendChild(addBookModal);
+
+  addBookModal.addEventListener("click", (e) => {
+    if (e.target === addBookModal) {
+      addBookModal.classList.add("hidden");
+    }
+  });
+
+  const addBookSubmit = addBookModal.querySelector(".add-book-submit");
+
+  addBookSubmit.addEventListener("click", () => {
+    // Тут я вказую, що зображення буде завантажуватись з локального комп'ютера.
+    // Якщо зображення не вибрано, то воно не буде відображатись.
+    // Мені треба пояснення цього моменту.
+    const imageInput = addBookModal.querySelector(".add-book-image");
+    const imageFile = imageInput.files[0];
+    const imageURL = imageFile ? URL.createObjectURL(imageFile) : "";
+
+    books.push({
+      id: books.length + 1,
+      image: imageURL,
+      title: addBookModal.querySelector(".add-book-title").value,
+      author: addBookModal.querySelector(".add-book-author").value,
+      genre: addBookModal.querySelector(".add-book-genre").value,
+      price: addBookModal.querySelector(".add-book-price").value,
+      status: "Не прочитано",
+    });
+
+    renderBooks();
+
+    addBookModal.classList.add("hidden");
   });
 });
