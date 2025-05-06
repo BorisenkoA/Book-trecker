@@ -74,10 +74,11 @@ const books = [
   },
 ];
 
+const booksContainer = document.querySelector(".books");
+
 function renderBooks() {
 
-  const bookContainer = document.querySelector(".books");
-  bookContainer.innerHTML = "";
+  booksContainer.innerHTML = "";
 
   const bookToPaste = books
     .map((book) => {
@@ -91,150 +92,118 @@ function renderBooks() {
         statusClass = "read";
       }
 
-      return `<div class="book">
-  <div class="image"><img src="${book.image}" alt="book"></div>
-  <h2 class="title">${book.title}</h2>
-  <p class="author">${book.author}</p>
-  <p class="price">${book.price} грн</p>
-  <p class="status ${statusClass}">${book.status}</p>
-</div>`;
+      return `
+      <div class="book" data-id="${book.id}">
+        <div class="image"><img src="${book.image}" alt="book"></div>
+        <h2 class="title">${book.title}</h2>
+        <p class="author">${book.author}</p>
+        <p class="price">${book.price} грн</p>
+        <p class="status ${statusClass}">${book.status}</p>
+      </div>`;
+    }).join("");
+
+  booksContainer.insertAdjacentHTML("afterbegin", bookToPaste);
+
+  const book = document.querySelectorAll(".book");
+
+  book.forEach(card => {
+    card.addEventListener("click", () => {
+      const bookId = +card.dataset.id;
+      const book = books.find(b => b.id == bookId);
+      if (book) openModal(book);
     })
-    .join("");
+  })
 
-  bookContainer.insertAdjacentHTML("afterbegin", bookToPaste);
-
-  addBookClickListeners();
 }
 renderBooks();
 
-function addBookClickListeners() {
+function openModal(book) {
+  const modal = document.getElementById("modal");
+  const modalBody = document.querySelector(".modal-body");
 
-  const booksDOM = document.querySelectorAll(".book");
+  modalBody.innerHTML = `
+    <div class="modal-image"><img src="${book.image}" alt="${book.title}"></div>
+    <h2 class="title">${book.title}</h2>
+    <p class="author">${book.author}</p>
+    <p class="price">${book.price} грн</p>
+    <div class="status-btns">
+      <button class="status-btn read">Прочитано</button>
+      <button class="status-btn in-progress">В процесі</button>
+      <button class="status-btn not-read">Не прочитано</button>
+    </div>
+  `;
+  modal.style.display = "flex";
+  
+  // Блокуємо прокрутку сторінки
+  document.body.style.overflow = "hidden";
+}
 
-  booksDOM.forEach((item) => {
-    item.addEventListener("click", () => {
-      const modal = document.createElement("div");
-      modal.classList.add("modal");
-      const clone = item.cloneNode(true);
-      clone.classList.add("modal-card");
+function closeModal() {
+  const modal = document.getElementById("modal");
+  modal.style.display = "none";
+  
+  // Відновлюємо прокрутку
+  document.body.style.overflow = "auto";
+}
 
-      const clonedStatus = clone.querySelector(".status");
-      clonedStatus.remove();
+document.querySelector(".close").addEventListener("click", closeModal);
 
-      const clonedStatusBtns = document.createElement("div");
-      clonedStatusBtns.classList.add("status-btns");
-      const statusRead = document.createElement("button");
-      statusRead.classList.add("status-btn", "read");
-      statusRead.innerText = "Прочитано";
-      const statusInProgress = document.createElement("button");
-      statusInProgress.classList.add("status-btn", "in-progress");
-      statusInProgress.innerText = "В процесі";
-      const statusNotRead = document.createElement("button");
-      statusNotRead.classList.add("status-btn", "not-read");
-      statusNotRead.innerText = "Не прочитано";
+document.getElementById("modal").addEventListener("click", (e) => {
+  if (e.target.id === "modal") {
+    closeModal();
+  }
+});
 
-      clonedStatusBtns.appendChild(statusRead);
-      clonedStatusBtns.appendChild(statusInProgress);
-      clonedStatusBtns.appendChild(statusNotRead);
+function addNewBook() {
 
-      // А такий код спрацював, чомусь треба було записати блок із кнопками в змінну, використати querySelectorAll.
-      // Не можу собі цього поясити.
-      const cloneButtons = clonedStatusBtns.querySelectorAll(".status-btn");
+  const addBookButton = document.querySelector(".add-book");
+  
+  addBookButton.addEventListener("click", () => {
+  
+    console.log("Add book button clicked");
+    const addBookModal = document.createElement("div");
+    addBookModal.classList.add("add-book-modal");
+    addBookModal.innerHTML = `
+      <div class="add-book-content">
+        <input type="file" accept="image/*" placeholder="Завантажити зображення" class="add-book-image">
+        <input type="text" placeholder="Назва" class="add-book-title">
+        <input type="text" placeholder="Автор" class="add-book-author">
+        <input type="text" placeholder="Жанр" class="add-book-genre">
+        <input type="number" placeholder="Ціна" class="add-book-price">
+        <button class="add-book-submit">Додати</button>
+      </div>
+    `;
+  
+    document.body.appendChild(addBookModal);
+    
+    addBookModal.addEventListener("click", (e) => {
+      if (e.target === addBookModal) {
+        addBookModal.classList.add("hidden");
+      }
+    });
+  
+    const addBookSubmit = addBookModal.querySelector(".add-book-submit");
+    addBookSubmit.addEventListener("click", () => {
 
-      cloneButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-          modal.classList.add("hidden");
-
-          // Прикольно, спрацювало, але хочу зрозуміти, чому так.
-          const status = button.innerText;
-          const statusClass = button.classList[1];
-          const bookStatus = item.querySelector(".status");
-          bookStatus.classList.remove("not-read", "in-progress", "read");
-          bookStatus.classList.add(statusClass);
-          bookStatus.innerText = status;
-        });
+      // Тут я вказую, що зображення буде завантажуватись з локального комп'ютера.
+      // Якщо зображення не вибрано, то воно не буде відображатись.
+      // Мені треба пояснення цього моменту.
+      const imageInput = addBookModal.querySelector(".add-book-image");
+      const imageFile = imageInput.files[0];
+      const imageURL = imageFile ? URL.createObjectURL(imageFile) : "";
+      
+      books.push({
+        id: books.length + 1,
+        image: imageURL,
+        title: addBookModal.querySelector(".add-book-title").value,
+        author: addBookModal.querySelector(".add-book-author").value,
+        genre: addBookModal.querySelector(".add-book-genre").value,
+        price: addBookModal.querySelector(".add-book-price").value,
+        status: "Не прочитано",
       });
-
-      clone.appendChild(clonedStatusBtns);
-
-      // Додаю кнопку видалення книжки.
-      const removedButton = document.createElement("div");
-      removedImage = document.createElement("img");
-      removedImage.src = "./trash.svg";
-      removedImage.alt = "Remove book";
-      removedImage.classList.add("remove-icon");
-      removedButton.appendChild(removedImage);
-      removedButton.classList.add("remove-button");
-      removedButton.addEventListener("click", () => {
-        item.remove();
-        modal.classList.add("hidden");
-      });
-      clone.appendChild(removedButton);
-
-      // Додаю клон книжки в модалку
-      modal.appendChild(clone);
-
-      // Додаю модалку в DOM
-      document.body.appendChild(modal);
-
-      // Kод для закриття модалки
-      modal.addEventListener("click", (e) => {
-        if (e.target === modal) {
-          modal.classList.add("hidden");
-        }
-      });
+      renderBooks();
+      addBookModal.classList.add("hidden");
     });
   });
 }
-
-// Додавання книжки
-const addBookButton = document.querySelector(".add-book");
-
-addBookButton.addEventListener("click", () => {
-  console.log("Add book button clicked");
-
-  const addBookModal = document.createElement("div");
-  addBookModal.classList.add("add-book-modal");
-  addBookModal.innerHTML = `
-    <div class="add-book-content">
-      <input type="file" accept="image/*" placeholder="Завантажити зображення" class="add-book-image">
-      <input type="text" placeholder="Назва" class="add-book-title">
-      <input type="text" placeholder="Автор" class="add-book-author">
-      <input type="text" placeholder="Жанр" class="add-book-genre">
-      <input type="number" placeholder="Ціна" class="add-book-price">
-      <button class="add-book-submit">Додати</button>
-    </div>
-  `;
-  document.body.appendChild(addBookModal);
-
-  addBookModal.addEventListener("click", (e) => {
-    if (e.target === addBookModal) {
-      addBookModal.classList.add("hidden");
-    }
-  });
-
-  const addBookSubmit = addBookModal.querySelector(".add-book-submit");
-
-  addBookSubmit.addEventListener("click", () => {
-    // Тут я вказую, що зображення буде завантажуватись з локального комп'ютера.
-    // Якщо зображення не вибрано, то воно не буде відображатись.
-    // Мені треба пояснення цього моменту.
-    const imageInput = addBookModal.querySelector(".add-book-image");
-    const imageFile = imageInput.files[0];
-    const imageURL = imageFile ? URL.createObjectURL(imageFile) : "";
-
-    books.push({
-      id: books.length + 1,
-      image: imageURL,
-      title: addBookModal.querySelector(".add-book-title").value,
-      author: addBookModal.querySelector(".add-book-author").value,
-      genre: addBookModal.querySelector(".add-book-genre").value,
-      price: addBookModal.querySelector(".add-book-price").value,
-      status: "Не прочитано",
-    });
-
-    renderBooks();
-
-    addBookModal.classList.add("hidden");
-  });
-});
+addNewBook();

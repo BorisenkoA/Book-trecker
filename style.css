@@ -124,10 +124,6 @@ ul {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.603);
 }
 
-.book img {
-  width: 100%;
-}
-
 .image {
   display: flex;
   align-items: center;
@@ -220,6 +216,8 @@ ul {
   transition: all 0.3s ease;
 }
 
+/* Стилі модального вікна редагування книжки */
+
 .modal {
   position: fixed;
   top: 0;
@@ -228,15 +226,65 @@ ul {
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(1rem);
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
 }
 
-.modal-card {
-  position: relative;
+.modal-content {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 1rem;
   max-width: 35rem;
   width: 100%;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.modal-body {
+  background: #fff;
+  border-radius: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  height: 45rem;
+}
+
+.modal-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  width: 100%;
+  height: 40rem;
+}
+
+.modal-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: all 0.3s ease;
+}
+
+.close {
+  color: #ffffff;
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  font-size: 4rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .status-btns {
@@ -258,46 +306,30 @@ ul {
 }
 
 .status-btn.read {
-  background: #28a745; /* зелений */
+  background: #28a745;
 }
 
 .status-btn.read:hover {
-  background: #1e7e34; /* зелении при наведенні */
+  background: #1e7e34;
 }
 
 .status-btn.not-read {
-  background: #189ef0; /* червоний */
+  background: #189ef0;
 }
 
 .status-btn.not-read:hover {
-  background: #0565a0; /* червоний при наведенні */
+  background: #0565a0;
 }
 
 .status-btn.in-progress {
-  background: #f49e26; /* помаранчевий */
+  background: #f49e26;
 }
 
 .status-btn.in-progress:hover {
-  background: #9a7507; /* помаранчевий при наведенні */
+  background: #9a7507;
 }
 
-.remove-button {
-  position: absolute;
-  top: 2rem;
-  right: 2rem;
-  width: 5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #eeeeee;
-  font-size: 1.6rem;
-  padding: 1rem;
-  border-radius: 10rem;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease-out;
-}
-
+/* Стилі модального вікна додавання книжки */
 .add-book-modal {
   position: fixed;
   top: 0;
@@ -336,10 +368,6 @@ ul {
   font-size: 1.6rem;
 }
 
-.hidden {
-  display: none;
-}
-
 .add-book-submit {
   padding: 1rem 2rem;
   background: #28a745;
@@ -352,4 +380,8 @@ ul {
 }
 .add-book-submit:hover {
   background: #218838;
+}
+
+.hidden {
+  display: none;
 }
